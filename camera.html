@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Камера</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+      }
+      #btns {
+        margin-top: 20px;
+      }
+      button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+      #photo {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Добро пожаловать!</h1>
+    <div id="btns">
+      <button id="start">Включить камеру</button>
+      <button id="snap" style="display: none">Сделать фото</button>
+    </div>
+    <video id="vid" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display: none"></canvas>
+    <img id="photo" alt="Ваше фото" />
+
+    <script>
+      const vid = document.getElementById("vid");
+      const canvas = document.getElementById("canvas");
+      const photo = document.getElementById("photo");
+      const start = document.getElementById("start");
+      const snap = document.getElementById("snap");
+
+      start.onclick = function () {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+              vid.srcObject = stream;
+              snap.style.display = "inline";
+            })
+            .catch(function () {
+              alert("Не удалось получить доступ к камере.");
+            });
+        } else {
+          alert("Камера не поддерживается.");
+        }
+      };
+
+      snap.onclick = function () {
+        canvas
+          .getContext("2d")
+          .drawImage(vid, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        photo.src = dataUrl;
+        photo.style.display = "block";
+      };
+    </script>
+  </body>
+</html>
